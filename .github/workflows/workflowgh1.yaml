@@ -1,0 +1,42 @@
+name: Label artifacts
+
+on:
+    workflow_dispatch:
+    push:
+      branches:
+        -"*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+
+      - name: Register Build Artifact in Cloudbees Platform
+        uses: cloudbees-io-gha/register-build-artifact@v3
+        id: go-action
+        with:
+          name: "gha-artifact-test-1"
+          version: 1.0.1
+          url: "docker.io/example:latest"
+          digest: "sha256:1234567890abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqr"
+          label: "test long"
+          type: "docker"
+
+      - name: Registered Build ArtifactId
+        run: echo 'Registered Build ArtifactId ${{ steps.go-action.outputs.cbp_artifact_id }}'
+
+      - name: Label Artifact -- remove
+        uses: cloudbees-io-gha/label-artifact-version@v1
+        with:
+          artifact-id: ${{ steps.go-action.outputs.cbp_artifact_id }}
+          labels: "test long 1"
+          operation: REMOVE
+
+      - name: Label Artifact -- add
+        uses: cloudbees-io-gha/label-artifact-version@v1
+        with:
+          artifact-id: ${{ steps.go-action.outputs.cbp_artifact_id }}
+          labels: "New long 1"
