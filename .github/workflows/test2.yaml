@@ -1,10 +1,9 @@
-name: Label artifacts
+name: Test
 
 on:
-    workflow_dispatch:
     push:
       branches:
-        -"*"
+        -test-2
 
 jobs:
   build:
